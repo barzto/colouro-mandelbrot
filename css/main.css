@@ -1,0 +1,107 @@
+body {
+    margin: 0;
+    font-family: 'Exo 2', sans-serif;
+}
+
+#main-canvas { width: 100vw; height: 100vh; display: block; }
+
+body.zen > div {
+    display: none;
+}
+
+#zen-btn {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+    background-color: #ffffff;
+    opacity: 0.1;
+    width: 4rem;
+    height: 4rem;
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    z-index: 5;
+    transition: opacity .5s ease-in-out;
+}
+
+#zen-btn:hover {
+    opacity: 1.0;
+}
+
+body.zen > #zen-btn {
+    opacity: 0.0;
+}
+
+body.zen > #zen-btn:hover {
+    opacity: 0.8;
+}
+
+#mode-selector {
+    position: fixed;
+    right: 10px;
+    bottom: 3rem;
+    z-index: 5;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+#scheme {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    z-index: 5;
+}
+
+#scheme-colors {
+    display: inline-block;
+}
+
+#scheme input[type="color"] {
+    padding: 0;
+    border: 0;
+    vertical-align: middle;
+    height: 3rem;
+    max-width: 15vw;
+}
+
+#scheme input[type="text"] {
+    background-color: rgba(255, 255, 255, .7);
+    border: 0;
+    vertical-align: middle;
+}
+
+#scheme #clr-box {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, .7);
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    height: 2rem;
+    vertical-align: middle;
+}
+
+#scheme #clr-box input {
+    vertical-align: middle;
+}
+
+#scheme #clr-box a, #scheme #clr-box a:visited {
+    color: black;
+    text-decoration: none;
+    border-bottom: dashed 1px black;
+}
+
+#scheme #clr-box a:hover {
+    border-bottom: solid 1px black;
+}
+
+#scheme #clr-box.hidden {
+    display: none;
+}
+
+#clr-btn {
+    width: 4rem;
+    height: 4rem;
+    border:0;
+    background-image: url('../img/clr-icon.png');
+    background-size: cover;
+    border-radius: 25%;
+}
+

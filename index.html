@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Colouro Mandelbrot</title>
+
+    <!-- Search Engine -->
+    <meta name="description" content="Mandelbrot and Julia set fractals visualizations made with WebGL and love">
+    <meta name="image" content="https://colouroapp.com/toys/mandelbrot/img/colouro-mandelbrot.png">
+
+    <!-- Schema.org for Google -->
+    <meta itemprop="name" content="Colouro Mandelbrot">
+    <meta itemprop="description" content="Mandelbrot and Julia set fractals visualizations made with WebGL and love">
+    <meta itemprop="image" content="https://colouroapp.com/toys/mandelbrot/img/colouro-mandelbrot.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Colouro Mandelbrot">
+    <meta name="twitter:description" content="Mandelbrot and Julia set fractals visualizations made with WebGL and love">
+    <meta name="twitter:site" content="@PilsFuLab">
+    <meta name="twitter:creator" content="@PilsFuLab">
+    <meta name="twitter:image:src" content="https://colouroapp.com/toys/mandelbrot/img/colouro-mandelbrot-1024x512.png">
+
+    <!-- Open Graph general (Facebook, Pinterest & Google+) -->
+    <meta name="og:title" content="Colouro Mandelbrot">
+    <meta name="og:description" content="Mandelbrot and Julia set fractals visualizations made with WebGL and love">
+    <meta name="og:image" content="https://colouroapp.com/toys/mandelbrot/img/colouro-mandelbrot-1200x630.png">
+    <meta name="og:url" content="https://colouroapp.com/toys/mandelbrot">
+    <meta name="og:site_name" content="Colouro Mandelbrot">
+    <meta name="og:locale" content="en_US">
+    <meta name="og:type" content="website">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <link href="https://fonts.googleapis.com/css?family=Exo+2:400,400i" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+<canvas id="main-canvas"></canvas>
+<div id="scheme">
+    <button id="clr-btn" onclick="document.getElementById('clr-box').classList.toggle('hidden');"></button>
+    <span id="clr-box" class="hidden">
+        <label for="clr-host"><a href="//colouroapp.com">Colouro</a> Host</label>
+        <input id="clr-host" type="text" placeholder="192.168.0.42:8080" oninput="connectClicked();">
+        <button onclick="connectClicked();">Connect</button>
+    </span>
+    <span id="scheme-colors">
+        <input type="color" onchange="kit.context.scheme.setColorHex(0, this.value)">
+        <input type="color" onchange="kit.context.scheme.setColorHex(1, this.value)">
+        <input type="color" onchange="kit.context.scheme.setColorHex(2, this.value)">
+        <input type="color" onchange="kit.context.scheme.setColorHex(3, this.value)">
+        <input type="color" onchange="kit.context.scheme.setColorHex(4, this.value)">
+    </span>
+</div>
+<div id="mode-selector">
+    <select onchange="modeChanged(this.value);">
+        <option value="0" selected>Mandlerbrot</option>
+        <option value="1">Julia 1</option>
+        <option value="2">Julia 2</option>
+    </select>
+</div>
+<button id="zen-btn" onclick="toggleZenMode();">Zen</button>
+
+<script src="deps/twgl-full.min.js"></script>
+<script src="deps/colouro-reskin.js"></script>
+<script src="src/webglkit.js"></script>
+<script type="x-shader/x-vertex" id="vs">
+    attribute vec4 position;
+
+    void main() {
+        gl_Position = position;
+    }
+</script>
+
+<script type="x-shader/x-fragment" id="fs">
+    precision highp float;
+
+    uniform vec2 resolution;
+    uniform vec2 zoomCenter;
+    uniform float phi;
+    uniform float zoomSize;
+    uniform int maxIterations;
+    uniform int mode;
+    uniform vec3 color0;
+    uniform vec3 color1;
+    uniform vec3 color2;
+    uniform vec3 color3;
+    uniform vec3 color4;
+
+    vec2 f(vec2 z, vec2 c) {
+        return mat2(z, -z.y, z.x) * z + c;
+    }
+
+    vec3 palette(float f) {
+        f = 5.0 * pow(f, .8);
+        vec3 a,b;
+        float r;
+        if (f < 1.0) {
+            r = f;
+            a = color0;
+            b = color1;
+        } else if (f < 2.0) {
+            r = f - 1.0;
+            a = color1;
+            b = color2;
+        } else if (f < 3.0) {
+            r = f - 2.0;
+            a = color2;
+            b = color3;
+        } else if (f < 4.0) {
+            r = f - 3.0;
+            a = color3;
+            b = color4;
+        } else {
+            r = f - 4.0;
+            a = color4;
+            b = color0;
+        }
+        return mix(a,b,r);
+    }
+
+    float fractLoop(vec2 c, vec2 z, float stopLenSq) {
+        int iterations;
+        for (int i = 0; i < 10000; i++) {
+            if (i > maxIterations) {
+                return -1.0;
+            }
+            iterations = i;
+            z = f(z, c);
+            if (dot(z,z) > stopLenSq) {
+                break;
+            }
+        }
+        return float(iterations) / float(maxIterations);
+    }
+
+    float fractMandelbrot(vec2 p) {
+        return fractLoop(p, vec2(0,0), 4.0);
+    }
+
+    float fractJulia1(vec2 p) {
+        // golden ratio
+        float phi = 1.6180339887498948482;
+        return fractLoop(vec2(phi - 2.0, phi - 1.0), p, 4.0);
+    }
+
+    float fractJulia2(vec2 p) {
+        return fractLoop(vec2(.285, .01), p, 4.0);
+    }
+
+    void main() {
+        vec2 uv = gl_FragCoord.xy / resolution;
+        float cs = cos(phi);
+        float sn = sin(phi);
+        mat2 rot = mat2(cs, -sn, sn, cs);
+        vec2 scale = vec2(zoomSize, zoomSize * resolution.y / resolution.x);
+        vec2 c = zoomCenter + rot * ((uv * 4.0 - vec2(2.0)) * (scale / 4.0));
+
+        float iterFactor
+            = (mode == 1)
+            ? fractJulia1(c)
+            : (mode == 2)
+            ? fractJulia2(c)
+            : fractMandelbrot(c)
+            ;
+
+        gl_FragColor = (iterFactor < 0.0) ? vec4(vec3(0.0), 1.0) : vec4(palette(iterFactor), 1.0);
+    }
+
+</script>
+<script src="src/main.js"></script>
+</body>
+</html>
