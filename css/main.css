@@ -99,7 +99,7 @@ body.zen > #zen-btn:hover {
 #clr-btn {
     width: 4rem;
     height: 4rem;
-    border:0;
+    border: solid 1px black;
     background-image: url('../img/clr-icon.png');
     background-size: cover;
     border-radius: 25%;
