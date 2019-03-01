@@ -164,7 +164,7 @@ var app = {
         };
         const vb = twgl.createBufferInfoFromArrays(gl, arrays);
 
-        const initialColors = ['#007549','#fbdecb','#005a6e','#feedea','#fb4300'];
+        const initialColors = ['#fbdecb','#007549','#feedea','#005a6e','#fb4300'];
         const initialScale = 4.0;
 
         var scheme = new ColorScheme();
