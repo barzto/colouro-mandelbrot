@@ -4,6 +4,7 @@
 
     function createMousePanZoomController(translateCallback, zoomCallback) {
         var lastPos = null;
+        const maxDelta = 5.0;
 
         return {
             mouseDown: function (appContext, event){
@@ -24,6 +25,7 @@
             },
             wheel: function (appContext, event){
                 var d = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+                d = Math.min(maxDelta, Math.max(-maxDelta, d));
                 zoomCallback(appContext, Math.pow(1.01, d), event.clientX, event.clientY);
             }
         };
