@@ -115,6 +115,15 @@ Viewport.prototype.contains = function (worldX, worldY, w, h) {
 var colorInputs = document.getElementById('scheme-colors').getElementsByTagName('input');
 var client = null;
 
+function connectInputKeyPress(e) {
+    e = e || window.event;
+    if (e.key === 'Enter') {
+        connectClicked();
+        return false;
+    }
+    return true;
+}
+
 function connectClicked() {
     var url = document.getElementById('clr-host').value;
     if (url.indexOf(':') < 0) {

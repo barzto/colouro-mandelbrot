@@ -41,7 +41,7 @@
     <button id="clr-btn" onclick="document.getElementById('clr-box').classList.toggle('hidden');"></button>
     <span id="clr-box" class="hidden">
         <label for="clr-host"><a href="//colouroapp.com">Colouro</a> Host</label>
-        <input id="clr-host" type="text" placeholder="192.168.0.42:8080" oninput="connectClicked();">
+        <input id="clr-host" type="text" placeholder="192.168.0.42:8080" onkeypress="return connectInputKeyPress(event);">
         <button onclick="connectClicked();">Connect</button>
     </span>
     <span id="scheme-colors">
